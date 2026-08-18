@@ -1,0 +1,154 @@
+{% extends "_layouts/cp" %}
+
+{% set title = "Caught bots"|t('blackhole') %}
+
+{% set statusColors = {
+    blocked: 'red',
+    warned: 'orange',
+    released: 'light',
+} %}
+
+{% macro sortLink(label, column, sort, dir, status, search) %}
+    {% set nextDir = (sort == column and dir == 'desc') ? 'asc' : 'desc' %}
+    {% set arrow = sort == column ? (dir == 'desc' ? ' ↓' : ' ↑') : '' %}
+    <a href="{{ url('blackhole/bots', { status: status, search: search, sort: column, dir: nextDir }) }}">{{ label }}{{ arrow }}</a>
+{% endmacro %}
+
+{% from _self import sortLink %}
+
+{% block content %}
+    {% include "blackhole/_partials/style" %}
+
+    {% if not settings.enabled %}
+        <p class="error">{{ "Black Hole is switched off — nothing is being trapped or blocked."|t('blackhole') }}</p>
+    {% elseif not robotsCoversTrap %}
+        <p class="warning">
+            {{ "Your robots.txt does not disallow {url} yet, so nothing that reaches the trap has actually disobeyed anything. Fix that in the plugin settings before relying on this."|t('blackhole', { url: trapUrl }) }}
+        </p>
+    {% endif %}
+
+    <div class="blackhole-summary">
+        {% for key, label in { all: "All"|t('blackhole'), blocked: "Blocked"|t('blackhole'), warned: "On notice"|t('blackhole'), released: "Released"|t('blackhole') } %}
+            <a class="btn{{ status == key ? ' active' : '' }}"
+               href="{{ url('blackhole/bots', { status: key, search: search }) }}">
+                {{ label }} <span class="blackhole-muted">{{ counts[key] ?? 0 }}</span>
+            </a>
+        {% endfor %}
+    </div>
+
+    <form class="blackhole-toolbar" method="get" action="{{ url('blackhole/bots') }}">
+        <input type="hidden" name="status" value="{{ status }}">
+        <div class="texticon search icon clearable">
+            <input type="text" name="search" class="text fullwidth" autocomplete="off"
+                   placeholder="{{ 'Address, hostname, user agent or URL'|t('blackhole') }}"
+                   value="{{ search }}">
+        </div>
+        <button type="submit" class="btn">{{ "Search"|t('blackhole') }}</button>
+        {% if search %}
+            <a class="btn" href="{{ url('blackhole/bots', { status: status }) }}">{{ "Clear"|t('blackhole') }}</a>
+        {% endif %}
+    </form>
+
+    {% if bots|length %}
+        <table class="data fullwidth">
+            <thead>
+                <tr>
+                    <th>{{ sortLink("Address"|t('blackhole'), 'ip', sort, dir, status, search) }}</th>
+                    <th>{{ sortLink("Hostname"|t('blackhole'), 'hostname', sort, dir, status, search) }}</th>
+                    <th>{{ "Claimed to be"|t('blackhole') }}</th>
+                    <th class="thin">{{ sortLink("Trips"|t('blackhole'), 'hits', sort, dir, status, search) }}</th>
+                    <th class="thin">{{ sortLink("Turned away"|t('blackhole'), 'blockedHits', sort, dir, status, search) }}</th>
+                    <th class="thin">{{ sortLink("Last seen"|t('blackhole'), 'dateLastSeen', sort, dir, status, search) }}</th>
+                    <th class="thin"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for bot in bots %}
+                    <tr>
+                        <td class="blackhole-nowrap">
+                            <span class="status {{ statusColors[bot.status] ?? 'light' }}"></span>
+                            <a class="blackhole-mono" href="{{ url('blackhole/bots/' ~ bot.id) }}">{{ bot.ip }}</a>
+                        </td>
+                        <td class="blackhole-muted">{{ bot.hostname ?: '—' }}</td>
+                        <td>
+                            <span class="blackhole-truncate blackhole-muted" title="{{ bot.userAgent }}">
+                                {{ bot.userAgent ?: "no user agent"|t('blackhole') }}
+                            </span>
+                        </td>
+                        <td class="thin">{{ bot.hits }}</td>
+                        <td class="thin">{{ bot.blockedHits }}</td>
+                        <td class="thin blackhole-nowrap">{{ bot.dateLastSeen ? bot.dateLastSeen|datetime('short') : '—' }}</td>
+                        <td class="thin blackhole-nowrap">
+                            {% if canManage %}
+                                <form method="post" class="blackhole-nowrap">
+                                    {{ csrfInput() }}
+                                    {{ redirectInput('blackhole/bots') }}
+                                    <input type="hidden" name="botId" value="{{ bot.id }}">
+                                    {% if bot.status == 'released' %}
+                                        <button type="submit" class="btn small"
+                                                formaction="{{ actionUrl('blackhole/bots/block') }}"
+                                                name="ip" value="{{ bot.ip }}">{{ "Block"|t('blackhole') }}</button>
+                                    {% else %}
+                                        <button type="submit" class="btn small"
+                                                formaction="{{ actionUrl('blackhole/bots/release') }}">{{ "Release"|t('blackhole') }}</button>
+                                    {% endif %}
+                                    <button type="submit" class="btn small"
+                                            formaction="{{ actionUrl('blackhole/bots/delete') }}"
+                                            data-confirm="{{ 'Delete {ip} and its history?'|t('blackhole', { ip: bot.ip }) }}">
+                                        {{ "Delete"|t('blackhole') }}
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        {% if pages > 1 %}
+            <div class="blackhole-pagination">
+                {% if page > 1 %}
+                    <a class="btn" href="{{ url('blackhole/bots', { status: status, search: search, sort: sort, dir: dir, page: page - 1 }) }}">{{ "Previous"|t('blackhole') }}</a>
+                {% endif %}
+                <span class="blackhole-muted">{{ "Page {page} of {pages} · {total} caught"|t('blackhole', { page: page, pages: pages, total: total }) }}</span>
+                {% if page < pages %}
+                    <a class="btn" href="{{ url('blackhole/bots', { status: status, search: search, sort: sort, dir: dir, page: page + 1 }) }}">{{ "Next"|t('blackhole') }}</a>
+                {% endif %}
+            </div>
+        {% endif %}
+
+        {% if canManage %}
+            <form method="post" style="margin-top: 24px;">
+                {{ csrfInput() }}
+                <input type="hidden" name="action" value="blackhole/bots/purge">
+                <button type="submit" class="btn"
+                        data-confirm="{{ 'Delete every caught bot and its history?'|t('blackhole') }}">
+                    {{ "Empty the hole"|t('blackhole') }}
+                </button>
+            </form>
+        {% endif %}
+    {% else %}
+        <div class="blackhole-panel">
+            <h3>{{ "Nothing has fallen in yet"|t('blackhole') }}</h3>
+            <p>
+                {{ "That is the usual state of a working honeypot. The trap sits at"|t('blackhole') }}
+                <a class="blackhole-mono" href="{{ trapUrl }}" rel="nofollow">{{ trapUrl }}</a>,
+                {{ "robots.txt tells every crawler to stay out of it, and an invisible link on every page points at it. Anything that turns up here got here by ignoring an explicit instruction."|t('blackhole') }}
+            </p>
+        </div>
+    {% endif %}
+
+    {% if canManage %}
+        <div class="blackhole-panel" style="margin-top: 24px;">
+            <h3>{{ "Block an address by hand"|t('blackhole') }}</h3>
+            <form method="post" class="blackhole-toolbar">
+                {{ csrfInput() }}
+                {{ redirectInput('blackhole/bots') }}
+                <input type="hidden" name="action" value="blackhole/bots/block">
+                <input type="text" name="ip" class="text blackhole-mono" placeholder="203.0.113.7" required>
+                <input type="text" name="note" class="text" placeholder="{{ 'Why (optional)'|t('blackhole') }}">
+                <button type="submit" class="btn submit">{{ "Block"|t('blackhole') }}</button>
+            </form>
+        </div>
+    {% endif %}
+{% endblock %}

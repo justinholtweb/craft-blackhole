@@ -1,0 +1,18 @@
+<p>{{ "Black Hole caught a bot on {site}."|t('blackhole', { site: siteName }) }}</p>
+
+<table cellpadding="4" cellspacing="0" border="0">
+    <tr><td><strong>{{ "Address"|t('blackhole') }}</strong></td><td>{{ bot.ip }}</td></tr>
+    <tr><td><strong>{{ "Hostname"|t('blackhole') }}</strong></td><td>{{ bot.hostname ?: "no reverse DNS record"|t('blackhole') }}</td></tr>
+    <tr><td><strong>{{ "User agent"|t('blackhole') }}</strong></td><td>{{ bot.userAgent ?: "none sent"|t('blackhole') }}</td></tr>
+    <tr><td><strong>{{ "Requested"|t('blackhole') }}</strong></td><td>{{ bot.requestUri ?: '—' }}</td></tr>
+    <tr><td><strong>{{ "Referrer"|t('blackhole') }}</strong></td><td>{{ bot.referrer ?: '—' }}</td></tr>
+    <tr><td><strong>{{ "Method"|t('blackhole') }}</strong></td><td>{{ bot.method ?: '—' }}</td></tr>
+    <tr><td><strong>{{ "Trips"|t('blackhole') }}</strong></td><td>{{ bot.hits }}</td></tr>
+    <tr><td><strong>{{ "Status"|t('blackhole') }}</strong></td><td>{{ bot.status }}{% if bot.dateExpires %} ({{ "until {date}"|t('blackhole', { date: bot.dateExpires }) }}){% endif %}</td></tr>
+</table>
+
+<p><a href="{{ cpUrl }}">{{ "Open it in the control panel"|t('blackhole') }}</a></p>
+
+<p style="color:#666;font-size:13px;">
+    {{ "This is the only email you will get about this address — the alert is latched so a bot that spends the night hammering the site cannot spend the night emailing you."|t('blackhole') }}
+</p>

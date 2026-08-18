@@ -1,0 +1,17 @@
+{% extends "blackhole/_site/_shell" %}
+
+{% block pageTitle %}{{ "Access denied"|t('blackhole') }}{% endblock %}
+
+{% block body %}
+    <h1>{{ "Access denied"|t('blackhole') }}</h1>
+
+    <p>{{ message }}</p>
+
+    <hr class="rule">
+
+    <p class="muted">
+        {{ "Your address"|t('blackhole') }} <code>{{ ip }}</code>
+        {{ "was blocked after following a link that this site’s robots.txt asked crawlers not to follow."|t('blackhole') }}
+        {{ "If you believe this is a mistake, contact the site owner and quote that address."|t('blackhole') }}
+    </p>
+{% endblock %}

@@ -1,0 +1,26 @@
+{% extends "blackhole/_site/_shell" %}
+
+{% block pageTitle %}{{ blocked ? "Access denied"|t('blackhole') : "You have been warned"|t('blackhole') }}{% endblock %}
+
+{% block body %}
+    <h1>{{ blocked ? "You fell into the black hole"|t('blackhole') : "You have been warned"|t('blackhole') }}</h1>
+
+    <p>{{ message }}</p>
+
+    {% if not blocked %}
+        <p>
+            {{ "This is trip {hits} of {threshold}. Keep going and this address will be blocked."|t('blackhole', {
+                hits: hits,
+                threshold: threshold
+            }) }}
+        </p>
+    {% endif %}
+
+    <hr class="rule">
+
+    <p class="muted">
+        {{ "Your address"|t('blackhole') }} <code>{{ ip }}</code>
+        {{ "has been recorded. The link you followed was hidden, marked rel=\"nofollow\", and named in robots.txt as somewhere not to go."|t('blackhole') }}
+        {{ "If you are a person and reached this page by accident, contact the site owner and quote that address."|t('blackhole') }}
+    </p>
+{% endblock %}

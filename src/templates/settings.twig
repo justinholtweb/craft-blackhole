@@ -1,0 +1,281 @@
+{% import "_includes/forms" as forms %}
+
+{% set uaRows = [] %}
+{% for agent in settings.whitelistUserAgents %}
+    {% set uaRows = uaRows|merge([{ value: agent }]) %}
+{% endfor %}
+
+{% set ipRows = [] %}
+{% for ip in settings.whitelistIps %}
+    {% set ipRows = ipRows|merge([{ value: ip }]) %}
+{% endfor %}
+
+{% set recipientRows = [] %}
+{% for email in settings.alertRecipients %}
+    {% set recipientRows = recipientRows|merge([{ value: email }]) %}
+{% endfor %}
+
+<style>
+    .blackhole-panel { border: 1px solid var(--hairline-color); border-radius: var(--large-border-radius); padding: 16px; margin-bottom: 24px; }
+    .blackhole-panel h3 { margin-top: 0; }
+    .blackhole-code { display: block; white-space: pre; overflow-x: auto; background: var(--gray-050); border: 1px solid var(--hairline-color); border-radius: var(--small-border-radius); padding: 12px; font-family: var(--mono-font); font-size: 12px; line-height: 1.6; }
+    .blackhole-url { font-family: var(--mono-font); }
+</style>
+
+<div class="blackhole-panel">
+    <h3>{{ "How the trap is wired"|t('blackhole') }}</h3>
+
+    <p>
+        {{ "The hidden link points at"|t('blackhole') }}
+        <a class="blackhole-url" href="{{ trapUrl }}" rel="nofollow">{{ trapUrl }}</a>.
+        {{ "These two lines have to be in your robots.txt, or following that link isn’t disobedience — it’s just crawling."|t('blackhole') }}
+    </p>
+
+    <code class="blackhole-code">{{ directives }}</code>
+
+    {% if robotsCoversTrap %}
+        <p class="success">
+            {{ "{path} already disallows the trap."|t('blackhole', { path: robotsFilePath }) }}
+        </p>
+    {% elseif robotsFileExists %}
+        <p class="error">
+            {{ "{path} exists but does not disallow the trap yet. Paste the lines above into it, or run `php craft blackhole/robots/write`."|t('blackhole', { path: robotsFilePath }) }}
+        </p>
+    {% else %}
+        <p class="warning">
+            {{ "There is no robots.txt at {path}. Create one with the lines above, run `php craft blackhole/robots/write`, or turn on “Serve robots.txt” below."|t('blackhole', { path: robotsFilePath }) }}
+        </p>
+    {% endif %}
+</div>
+
+{{ forms.lightswitchField({
+    first: true,
+    label: "Enabled"|t('blackhole'),
+    instructions: "The master switch. Off means nothing is trapped and nothing is blocked; everything already in the ledger stays there."|t('blackhole'),
+    id: 'enabled',
+    name: 'settings[enabled]',
+    on: settings.enabled
+}) }}
+
+{{ forms.textField({
+    label: "Trap path"|t('blackhole'),
+    instructions: "Where the honeypot lives, relative to the site root. Change it and the robots.txt directives change with it."|t('blackhole'),
+    id: 'trapPath',
+    name: 'settings[trapPath]',
+    value: settings.trapPath,
+    errors: settings.getErrors('trapPath')
+}) }}
+
+{{ forms.lightswitchField({
+    label: "Add the link automatically"|t('blackhole'),
+    instructions: "Splice the hidden link into every front-end page, just before `</body>`. Turn it off to place `{{ craft.blackhole.link }}` yourself."|t('blackhole'),
+    id: 'autoInject',
+    name: 'settings[autoInject]',
+    on: settings.autoInject
+}) }}
+
+{{ forms.textField({
+    label: "Link warning"|t('blackhole'),
+    instructions: "The link’s title attribute. Nobody who reads the page can say they weren’t told, which is what makes the ban defensible."|t('blackhole'),
+    id: 'linkTitle',
+    name: 'settings[linkTitle]',
+    value: settings.linkTitle
+}) }}
+
+<hr>
+
+<h2>{{ "Catching"|t('blackhole') }}</h2>
+
+{{ forms.textField({
+    label: "Trips before a ban"|t('blackhole'),
+    instructions: "How many times an address has to reach the trap before it’s banned. One is the honeypot’s whole premise — there’s no innocent reason to be here."|t('blackhole'),
+    id: 'blockThreshold',
+    name: 'settings[blockThreshold]',
+    value: settings.blockThreshold,
+    type: 'number',
+    size: 5,
+    min: 1,
+    errors: settings.getErrors('blockThreshold')
+}) }}
+
+{{ forms.textField({
+    label: "Ban length"|t('blackhole'),
+    instructions: "Days a ban lasts. 0 means forever."|t('blackhole'),
+    id: 'banDays',
+    name: 'settings[banDays]',
+    value: settings.banDays,
+    type: 'number',
+    size: 5,
+    min: 0,
+    errors: settings.getErrors('banDays')
+}) }}
+
+{{ forms.lightswitchField({
+    label: "Never catch logged-in users"|t('blackhole'),
+    instructions: "Worth leaving on. A link-prefetching browser extension on one staff machine can otherwise lock out the whole office."|t('blackhole'),
+    id: 'ignoreLoggedIn',
+    name: 'settings[ignoreLoggedIn]',
+    on: settings.ignoreLoggedIn
+}) }}
+
+{{ forms.lightswitchField({
+    label: "Resolve hostnames"|t('blackhole'),
+    instructions: "Look up the reverse DNS name of a caught address, for the record and the alert. One blocking DNS call, and only ever on a catch."|t('blackhole'),
+    id: 'resolveHostnames',
+    name: 'settings[resolveHostnames]',
+    on: settings.resolveHostnames
+}) }}
+
+<hr>
+
+<h2>{{ "Who never gets caught"|t('blackhole') }}</h2>
+
+{{ forms.editableTableField({
+    label: "Whitelisted addresses"|t('blackhole'),
+    instructions: "Exact addresses (`203.0.113.7`), dotted prefixes (`203.0.113.`) or CIDR ranges (`203.0.113.0/24`, `2001:db8::/32`). These are never caught and never blocked."|t('blackhole'),
+    id: 'whitelistIps',
+    name: 'settings[whitelistIps]',
+    cols: {
+        value: { heading: "Address or range"|t('blackhole'), type: 'singleline', width: '100%' }
+    },
+    rows: ipRows,
+    addRowLabel: "Add an address"|t('blackhole'),
+    allowAdd: true,
+    allowDelete: true,
+    allowReorder: false,
+    errors: settings.getErrors('whitelistIps')
+}) }}
+
+{{ forms.editableTableField({
+    label: "Whitelisted user agents"|t('blackhole'),
+    instructions: "Matched case-insensitively as substrings. Remember that a user agent is a claim, not a fact — which is what the setting below is for."|t('blackhole'),
+    id: 'whitelistUserAgents',
+    name: 'settings[whitelistUserAgents]',
+    cols: {
+        value: { heading: "User agent contains"|t('blackhole'), type: 'singleline', width: '100%' }
+    },
+    rows: uaRows,
+    addRowLabel: "Add a user agent"|t('blackhole'),
+    allowAdd: true,
+    allowDelete: true,
+    allowReorder: false,
+    errors: settings.getErrors('whitelistUserAgents')
+}) }}
+
+{{ forms.lightswitchField({
+    label: "Verify good bots"|t('blackhole'),
+    instructions: "Make a visitor claiming to be Googlebot, Bingbot, Slurp, YandexBot, Baiduspider or Applebot prove it by forward-confirmed reverse DNS. Without this, the user-agent list is a door with a sign on it instead of a lock."|t('blackhole'),
+    id: 'verifyGoodBots',
+    name: 'settings[verifyGoodBots]',
+    on: settings.verifyGoodBots
+}) }}
+
+<hr>
+
+<h2>{{ "What a blocked request gets"|t('blackhole') }}</h2>
+
+{{ forms.selectField({
+    label: "Blocked status code"|t('blackhole'),
+    instructions: "403 is the honest answer. 404 hides that anything happened, which some people prefer."|t('blackhole'),
+    id: 'blockedStatusCode',
+    name: 'settings[blockedStatusCode]',
+    options: statusCodes,
+    value: settings.blockedStatusCode,
+    errors: settings.getErrors('blockedStatusCode')
+}) }}
+
+{{ forms.textareaField({
+    label: "Blocked message"|t('blackhole'),
+    instructions: "Shown to an address that has already been banned. It’s being read by software, so keep it plain."|t('blackhole'),
+    id: 'blockedMessage',
+    name: 'settings[blockedMessage]',
+    value: settings.blockedMessage,
+    rows: 3
+}) }}
+
+{{ forms.textareaField({
+    label: "Caught message"|t('blackhole'),
+    instructions: "Shown at the moment an address trips the trap."|t('blackhole'),
+    id: 'trappedMessage',
+    name: 'settings[trappedMessage]',
+    value: settings.trappedMessage,
+    rows: 3
+}) }}
+
+{{ forms.textField({
+    label: "Blocked template"|t('blackhole'),
+    instructions: "Optional site template rendered instead of the built-in block page. It gets `ip`, `message`, `userAgent`, `requestUri` and `statusCode`."|t('blackhole'),
+    id: 'blockedTemplate',
+    name: 'settings[blockedTemplate]',
+    value: settings.blockedTemplate,
+    placeholder: '_blackhole/blocked'
+}) }}
+
+{{ forms.textField({
+    label: "Caught template"|t('blackhole'),
+    instructions: "Optional site template rendered instead of the built-in trap page. It gets `caught`, `bot`, `ip`, `message`, `blocked`, `hits`, `threshold` and `reason`."|t('blackhole'),
+    id: 'trappedTemplate',
+    name: 'settings[trappedTemplate]',
+    value: settings.trappedTemplate,
+    placeholder: '_blackhole/trapped'
+}) }}
+
+{{ forms.textField({
+    label: "Redirect blocked requests to"|t('blackhole'),
+    instructions: "Optional. Must be on another host — an on-site redirect would loop, because that request is blocked too, so one is ignored and the block page is shown instead."|t('blackhole'),
+    id: 'redirectUrl',
+    name: 'settings[redirectUrl]',
+    value: settings.redirectUrl,
+    placeholder: 'https://example.com/'
+}) }}
+
+<hr>
+
+<h2>{{ "Alerts and housekeeping"|t('blackhole') }}</h2>
+
+{{ forms.lightswitchField({
+    label: "Email alerts"|t('blackhole'),
+    instructions: "One email the first time an address is banned, and never again for that address."|t('blackhole'),
+    id: 'emailAlerts',
+    name: 'settings[emailAlerts]',
+    on: settings.emailAlerts,
+    toggle: 'alert-settings'
+}) }}
+
+<div id="alert-settings" class="{{ settings.emailAlerts ? '' : 'hidden' }}">
+    {{ forms.editableTableField({
+        label: "Alert recipients"|t('blackhole'),
+        instructions: "Leave empty to email every active admin."|t('blackhole'),
+        id: 'alertRecipients',
+        name: 'settings[alertRecipients]',
+        cols: {
+            value: { heading: "Email address"|t('blackhole'), type: 'singleline', width: '100%' }
+        },
+        rows: recipientRows,
+        addRowLabel: "Add a recipient"|t('blackhole'),
+        allowAdd: true,
+        allowDelete: true,
+        allowReorder: false,
+        errors: settings.getErrors('alertRecipients')
+    }) }}
+</div>
+
+{{ forms.lightswitchField({
+    label: "Serve robots.txt"|t('blackhole'),
+    instructions: "Let the plugin answer `/robots.txt` with the directives above. Only takes effect when the site has no `web/robots.txt` of its own."|t('blackhole'),
+    id: 'serveRobotsTxt',
+    name: 'settings[serveRobotsTxt]',
+    on: settings.serveRobotsTxt
+}) }}
+
+{{ forms.textField({
+    label: "Keep hit history for"|t('blackhole'),
+    instructions: "Days of per-request history to keep. 0 keeps everything. Craft’s garbage collector does the pruning."|t('blackhole'),
+    id: 'logRetentionDays',
+    name: 'settings[logRetentionDays]',
+    value: settings.logRetentionDays,
+    type: 'number',
+    size: 5,
+    min: 0,
+    errors: settings.getErrors('logRetentionDays')
+}) }}

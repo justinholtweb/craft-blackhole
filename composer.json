@@ -1,0 +1,59 @@
+{
+    "name": "justinholtweb/craft-blackhole",
+    "description": "A honeypot for bad bots — a hidden trap link that robots.txt tells crawlers to stay away from, and a permanent block for the ones that follow it anyway.",
+    "version": "5.0.0",
+    "type": "craft-plugin",
+    "keywords": [
+        "craftcms",
+        "craft-plugin",
+        "honeypot",
+        "bots",
+        "crawlers",
+        "robots.txt",
+        "security",
+        "spam"
+    ],
+    "license": "proprietary",
+    "authors": [
+        {
+            "name": "Justin Holt",
+            "homepage": "https://justinholt.com"
+        }
+    ],
+    "support": {
+        "email": "justin@justinholt.com"
+    },
+    "minimum-stability": "stable",
+    "prefer-stable": true,
+    "require": {
+        "php": "^8.2",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "craftcms/cms": "^5.3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "justinholtweb\\blackhole\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "justinholtweb\\blackhole\\tests\\": "tests/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "craftcms/plugin-installer": true,
+            "yiisoft/yii2-composer": true
+        }
+    },
+    "extra": {
+        "name": "Black Hole",
+        "handle": "blackhole",
+        "developer": "Justin Holt",
+        "developerUrl": "https://justinholt.com",
+        "documentationUrl": "https://github.com/justinholtweb/craft-blackhole/blob/main/README.md",
+        "changelogUrl": "https://raw.githubusercontent.com/justinholtweb/craft-blackhole/main/CHANGELOG.md",
+        "class": "justinholtweb\\blackhole\\Plugin"
+    }
+}

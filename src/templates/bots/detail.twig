@@ -1,0 +1,129 @@
+{% extends "_layouts/cp" %}
+
+{% set title = bot.ip %}
+{% set crumbs = [
+    { label: "Black Hole"|t('blackhole'), url: url('blackhole/bots') },
+    { label: "Caught bots"|t('blackhole'), url: url('blackhole/bots') }
+] %}
+
+{% set statusColors = { blocked: 'red', warned: 'orange', released: 'light' } %}
+
+{% block actionButton %}
+    {% if canManage %}
+        <form method="post">
+            {{ csrfInput() }}
+            {{ redirectInput('blackhole/bots/' ~ bot.id) }}
+            <input type="hidden" name="botId" value="{{ bot.id }}">
+            {% if bot.status == 'released' %}
+                <button type="submit" class="btn submit"
+                        formaction="{{ actionUrl('blackhole/bots/block') }}"
+                        name="ip" value="{{ bot.ip }}">{{ "Block again"|t('blackhole') }}</button>
+            {% else %}
+                <button type="submit" class="btn"
+                        formaction="{{ actionUrl('blackhole/bots/release') }}">{{ "Release"|t('blackhole') }}</button>
+            {% endif %}
+            <button type="submit" class="btn"
+                    formaction="{{ actionUrl('blackhole/bots/whitelist') }}"
+                    data-confirm="{{ 'Add {ip} to the whitelist? It will never be caught again.'|t('blackhole', { ip: bot.ip }) }}">
+                {{ "Whitelist"|t('blackhole') }}
+            </button>
+            <button type="submit" class="btn"
+                    formaction="{{ actionUrl('blackhole/bots/delete') }}"
+                    data-confirm="{{ 'Delete {ip} and its history?'|t('blackhole', { ip: bot.ip }) }}">
+                {{ "Delete"|t('blackhole') }}
+            </button>
+        </form>
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+    {% include "blackhole/_partials/style" %}
+
+    {% if isWhitelisted %}
+        <p class="warning">
+            {{ "This address is on the whitelist, so it is not being blocked no matter what this row says."|t('blackhole') }}
+        </p>
+    {% endif %}
+
+    <div class="blackhole-panel">
+        <p>
+            <span class="status {{ statusColors[bot.status] ?? 'light' }}"></span>
+            <strong>{{ bot.status|t('blackhole') }}</strong>
+            {% if bot.dateExpires %}
+                <span class="blackhole-muted">· {{ "until {date}"|t('blackhole', { date: bot.dateExpires|datetime('short') }) }}</span>
+            {% elseif bot.status == 'blocked' %}
+                <span class="blackhole-muted">· {{ "permanently"|t('blackhole') }}</span>
+            {% endif %}
+        </p>
+
+        <dl class="blackhole-facts">
+            <dt>{{ "Address"|t('blackhole') }}</dt>
+            <dd class="blackhole-mono">{{ bot.ip }}</dd>
+
+            <dt>{{ "Hostname"|t('blackhole') }}</dt>
+            <dd>{{ bot.hostname ?: "no reverse DNS record"|t('blackhole') }}</dd>
+
+            <dt>{{ "User agent"|t('blackhole') }}</dt>
+            <dd class="blackhole-mono">{{ bot.userAgent ?: "none sent"|t('blackhole') }}</dd>
+
+            <dt>{{ "Tripped the trap at"|t('blackhole') }}</dt>
+            <dd class="blackhole-mono">{{ bot.requestUri ?: '—' }}</dd>
+
+            <dt>{{ "Referrer"|t('blackhole') }}</dt>
+            <dd class="blackhole-mono">{{ bot.referrer ?: '—' }}</dd>
+
+            <dt>{{ "Method"|t('blackhole') }}</dt>
+            <dd>{{ bot.method ?: '—' }}</dd>
+
+            <dt>{{ "Trips / turned away"|t('blackhole') }}</dt>
+            <dd>{{ bot.hits }} / {{ bot.blockedHits }}</dd>
+
+            <dt>{{ "First caught"|t('blackhole') }}</dt>
+            <dd>{{ bot.dateCaught ? bot.dateCaught|datetime('short') : '—' }}</dd>
+
+            <dt>{{ "Last seen"|t('blackhole') }}</dt>
+            <dd>{{ bot.dateLastSeen ? bot.dateLastSeen|datetime('short') : '—' }}</dd>
+
+            {% if bot.note %}
+                <dt>{{ "Note"|t('blackhole') }}</dt>
+                <dd>{{ bot.note }}</dd>
+            {% endif %}
+        </dl>
+    </div>
+
+    <h2>{{ "History"|t('blackhole') }}</h2>
+
+    {% if hits|length %}
+        <table class="data fullwidth">
+            <thead>
+                <tr>
+                    <th class="thin">{{ "When"|t('blackhole') }}</th>
+                    <th class="thin">{{ "What"|t('blackhole') }}</th>
+                    <th class="thin">{{ "Method"|t('blackhole') }}</th>
+                    <th>{{ "URL"|t('blackhole') }}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for hit in hits %}
+                    <tr>
+                        <td class="thin blackhole-nowrap">{{ hit.dateCreated|datetime('short') }}</td>
+                        <td class="thin">
+                            {% if hit.kind == 'trap' %}
+                                <span class="error">{{ "tripped the trap"|t('blackhole') }}</span>
+                            {% else %}
+                                <span class="blackhole-muted">{{ "turned away"|t('blackhole') }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="thin">{{ hit.method ?: '—' }}</td>
+                        <td><span class="blackhole-truncate blackhole-mono" title="{{ hit.requestUri }}">{{ hit.requestUri ?: '—' }}</span></td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p class="blackhole-muted" style="margin-top: 8px;">
+            {{ "Repeat attempts are recorded at most once a minute, so a bot hammering the site leaves a readable trail instead of a disk-space problem."|t('blackhole') }}
+        </p>
+    {% else %}
+        <p class="blackhole-muted">{{ "No history left — the retention window has been through it."|t('blackhole') }}</p>
+    {% endif %}
+{% endblock %}
