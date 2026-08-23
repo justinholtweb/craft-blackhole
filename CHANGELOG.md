@@ -2,7 +2,7 @@
 
 All notable changes to Black Hole are documented here.
 
-## 5.0.0 — 2026-08-18
+## 5.0.0 — 2026-08-23
 
 Initial release. Versioned 5.x to match the Craft major it targets, as the rest of this plugin
 family is.
