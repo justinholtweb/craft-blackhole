@@ -56,7 +56,7 @@ That's the whole setup. The hidden link is injected into every front-end page au
 ```html
 <a href="https://example.com/blackhole"
    title="Do NOT follow this link or you will be banned from this site!"
-   rel="nofollow" style="display: none;" aria-hidden="true" tabindex="-1">&nbsp;</a>
+   rel="nofollow" style="display:none;" aria-hidden="true" tabindex="-1">&nbsp;</a>
 ```
 
 `display:none` hides it from readers. `rel="nofollow"` is the second explicit instruction not to
