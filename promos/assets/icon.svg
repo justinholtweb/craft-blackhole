@@ -1,23 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-  <!-- Rounded tile: 22.44% radius, matching Appleseed's rx="35" on a 156px square.
-       Dark rather than accent-filled, because a black hole on a bright field reads as an eye:
-       ring + disc + light between them is exactly an eye. On a dark ground the horizon merges
-       with the surround, which is both what a black hole looks like and what kills the eye. -->
-  <defs>
-    <radialGradient id="void" cx="50%" cy="50%" r="62%">
-      <stop offset="0%" stop-color="#151021"/>
-      <stop offset="100%" stop-color="#0c0b12"/>
-    </radialGradient>
-    <linearGradient id="disk" x1="6%" y1="26%" x2="94%" y2="74%">
-      <stop offset="0%" stop-color="#D9542B"/>
-      <stop offset="46%" stop-color="#E8912D"/>
-      <stop offset="100%" stop-color="#FFD9A0"/>
-    </linearGradient>
-  </defs>
-  <rect x="0" y="0" width="100" height="100" rx="22.44" fill="url(#void)"/>
-  <!-- The accretion disk -->
-  <path fill="url(#disk)" fill-rule="evenodd" d="M50 26c24.3 0 44 10.7 44 24S74.3 74 50 74 6 63.3 6 50s19.7-24 44-24zm0 8c-20.4 0-36 7.2-36 16s15.6 16 36 16 36-7.2 36-16-15.6-16-36-16z"/>
-  <!-- The event horizon. Same value as the ground on purpose: the one part of the mark that
-       gives nothing back should not be a shape sitting on top of the tile. -->
-  <circle cx="50" cy="50" r="16.5" fill="#0c0b12"/>
+  <!-- Rounded tile: 22.44% radius, matching Appleseed's rx="35" on a 156px square -->
+  <rect x="0" y="0" width="100" height="100" rx="22.44" fill="#E8912D"/>
+  <!-- The accretion disk. There is no separate horizon shape: the hole in the ring IS the
+       horizon, and drawing a filled disc inside it turns the mark into an eye. -->
+  <path fill="#FEFEFE" fill-rule="evenodd" d="M50 26c24.3 0 44 10.7 44 24S74.3 74 50 74 6 63.3 6 50s19.7-24 44-24zm0 8c-20.4 0-36 7.2-36 16s15.6 16 36 16 36-7.2 36-16-15.6-16-36-16z"/>
 </svg>
