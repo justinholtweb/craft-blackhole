@@ -1,3 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <path fill-rule="evenodd" d="M50 26c24.3 0 44 10.7 44 24S74.3 74 50 74 6 63.3 6 50s19.7-24 44-24zm0 8c-20.4 0-36 7.2-36 16s15.6 16 36 16 36-7.2 36-16-15.6-16-36-16z"/>
+  <!-- Control-panel nav icon. Craft paints this as a flat silhouette at about 16px, where the
+       tile icon's 8-unit band goes spindly and the hole all but closes. So the ring is redrawn
+       heavier for the mask — outer 46x26, hole 31x12 — rather than reused at the icon's own
+       proportions. Same move, and the same reason, as craft-alarmclock's mask. -->
+  <path fill-rule="evenodd" d="M50 24c25.4 0 46 11.6 46 26S75.4 76 50 76 4 64.4 4 50s20.6-26 46-26zm0 14c-17.1 0-31 5.4-31 12s13.9 12 31 12 31-5.4 31-12-13.9-12-31-12z"/>
 </svg>

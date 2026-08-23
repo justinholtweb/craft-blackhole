@@ -1,3 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
-    <path fill-rule="evenodd" d="M50 26c24.3 0 44 10.7 44 24S74.3 74 50 74 6 63.3 6 50s19.7-24 44-24zm0 8c-20.4 0-36 7.2-36 16s15.6 16 36 16 36-7.2 36-16-15.6-16-36-16z"/>
+  <!-- Plugin Store icon. Rounded tile in the plugin's accent, mark in #FEFEFE — the shape the
+       rest of the family uses, so a row of these in the Plugin Store reads as one shelf. -->
+  <rect x="0" y="0" width="100" height="100" rx="22.44" fill="#E8912D"/>
+  <!-- The accretion disk. There is deliberately no filled horizon inside it: a light ring around
+       a dark centre on a bright field is an eye, and that is all anyone sees once they see it.
+       The hole in the ring is the horizon, which is also what a black hole photographs as. -->
+  <path fill="#FEFEFE" fill-rule="evenodd" d="M50 26c24.3 0 44 10.7 44 24S74.3 74 50 74 6 63.3 6 50s19.7-24 44-24zm0 8c-20.4 0-36 7.2-36 16s15.6 16 36 16 36-7.2 36-16-15.6-16-36-16z"/>
 </svg>
