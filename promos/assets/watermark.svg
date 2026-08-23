@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="#ffffff">
+  <!-- Disk and horizon only, no tile. The tile's rounded square reads as a hard-edged box
+       across the slide at watermark scale, exactly like Abacus's frame bars did. -->
+  <path fill-rule="evenodd" d="M50 26c24.3 0 44 10.7 44 24S74.3 74 50 74 6 63.3 6 50s19.7-24 44-24zm0 8c-20.4 0-36 7.2-36 16s15.6 16 36 16 36-7.2 36-16-15.6-16-36-16z"/>
+  <circle cx="50" cy="50" r="16.5"/>
+</svg>

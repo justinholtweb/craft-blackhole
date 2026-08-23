@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<!-- handmade: hand-tuned deck -->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Black Hole — Plugin Store promos</title>
+<link rel="stylesheet" href="fonts.css">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --charcoal: #0f0f1a;
+    --charcoal-light: #1a1a2e;
+    --charcoal-lighter: #252540;
+    --accent: #E8912D;
+    --accent-light: #F5AC55;
+    --hot: #D9542B;
+    --pale: #FFD9A0;
+    --off-white: #f0f0f5;
+  }
+
+  html { background: #000; }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    color: var(--off-white);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ---- slide shell ---------------------------------------------------- */
+  .slide {
+    position: relative;
+    width: 1920px;
+    height: 1080px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 85% 15%, rgba(232, 145, 45, 0.20) 0%, transparent 42%),
+      radial-gradient(ellipse at 68% 6%,  rgba(217, 84, 43, 0.13) 0%, transparent 34%),
+      radial-gradient(ellipse at 14% 86%, rgba(255, 217, 160, 0.06) 0%, transparent 40%),
+      radial-gradient(ellipse at 36% 96%, rgba(232, 145, 45, 0.08) 0%, transparent 35%),
+      linear-gradient(135deg, #0f0f1a 0%, #1a1410 30%, #1d1712 60%, #0f0f1a 100%);
+  }
+
+  /* Oversized watermark, echoing the app icon */
+  .slide::after {
+    content: '';
+    position: absolute;
+    top: -14%;
+    left: -14%;
+    width: 1180px;
+    height: 1180px;
+    background: url('assets/watermark.svg') no-repeat center / contain;
+    opacity: 0.05;
+    pointer-events: none;
+  }
+
+  /* Hairline along the top edge */
+  .slide::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 6px;
+    background: linear-gradient(90deg, var(--hot), var(--accent), var(--pale), var(--hot));
+    z-index: 5;
+  }
+
+  .inner {
+    position: relative;
+    z-index: 2;
+    height: 100%;
+    padding: 118px 130px;
+    display: flex;
+    align-items: center;
+  }
+
+  /* ---- type ------------------------------------------------------------ */
+  .eyebrow {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 20px;
+    font-weight: 500;
+    letter-spacing: 0.32em;
+    text-transform: uppercase;
+    color: rgba(240, 240, 245, 0.62);
+    margin-bottom: 34px;
+  }
+  .eyebrow .rule {
+    width: 58px;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--accent-light);
+  }
+
+  h1, h2 {
+    font-family: 'Jersey 20', sans-serif;
+    font-weight: 400;
+    line-height: 0.9;
+    letter-spacing: 0.005em;
+  }
+
+  .gradient-text {
+    background-image: linear-gradient(100deg, #D9542B 0%, #E8912D 36%, #FFD9A0 66%, #D9542B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .lede {
+    font-size: 34px;
+    line-height: 1.5;
+    color: rgba(240, 240, 245, 0.72);
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  }
+
+  /* ---- cover slide ----------------------------------------------------- */
+  .cover .inner { gap: 90px; }
+  .cover .copy { flex: 1 1 auto; }
+  .cover h1 { font-size: 186px; margin-bottom: 26px; }
+  .cover .tagline {
+    font-family: 'Jersey 20', sans-serif;
+    font-size: 60px;
+    line-height: 1.02;
+    color: var(--off-white);
+    margin-bottom: 40px;
+    max-width: 15ch;
+  }
+  .cover .lede { max-width: 27ch; font-size: 30px; }
+
+  .cover .mark {
+    flex: 0 0 auto;
+    width: 460px;
+    height: 460px;
+    filter: drop-shadow(14px 14px 0 rgba(0, 0, 0, 0.35));
+  }
+  .cover .mark img { width: 100%; height: 100%; display: block; }
+
+  .badges { display: flex; gap: 16px; margin-top: 52px; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 26px;
+    font-size: 22px;
+    font-weight: 500;
+    color: rgba(240, 240, 245, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 999px;
+  }
+  .badge .dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent-light);
+  }
+  .badge.free { border-color: rgba(232, 145, 45, 0.45); background: rgba(232, 145, 45, 0.12); }
+
+  /* ---- the three-beat statement ---------------------------------------- */
+  .statement .inner { flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+  .statement .eyebrow { justify-content: center; }
+
+  .beats { display: flex; align-items: stretch; gap: 30px; margin: 18px 0 46px; }
+  .beat {
+    flex: 1 1 0;
+    width: 470px;
+    padding: 52px 44px;
+    border-radius: 20px;
+    background: rgba(37, 37, 64, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    text-align: left;
+  }
+  .beat .n {
+    font-family: 'Jersey 20', sans-serif;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--accent);
+    margin-bottom: 22px;
+  }
+  .beat h3 {
+    font-family: 'Jersey 20', sans-serif;
+    font-weight: 400;
+    font-size: 54px;
+    line-height: 1.02;
+    margin-bottom: 20px;
+    color: var(--off-white);
+  }
+  .beat p { font-size: 25px; line-height: 1.45; color: rgba(240, 240, 245, 0.58); }
+  .beat.last { border-color: rgba(232, 145, 45, 0.4); background: rgba(232, 145, 45, 0.09); }
+  .beat.last .n { color: var(--pale); }
+
+  .arrow-h {
+    flex: 0 0 auto;
+    align-self: center;
+    width: 46px; height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, rgba(232,145,45,0.2), var(--accent-light));
+    position: relative;
+  }
+  .arrow-h::after {
+    content: '';
+    position: absolute;
+    right: -3px; top: 50%;
+    width: 16px; height: 16px;
+    transform: translateY(-50%) rotate(-45deg);
+    border-right: 4px solid var(--accent-light);
+    border-bottom: 4px solid var(--accent-light);
+    border-radius: 2px;
+  }
+
+  .statement .kicker {
+    font-family: 'Jersey 20', sans-serif;
+    font-size: 68px;
+    line-height: 1.06;
+    max-width: 30ch;
+  }
+
+  /* ---- feature slides -------------------------------------------------- */
+  .feature .inner { align-items: center; }
+  .feature .copy { width: 780px; flex: 0 0 780px; }
+  .feature h2 { font-size: 108px; margin-bottom: 30px; }
+  .feature .lede { max-width: 21ch; }
+
+  .points {
+    list-style: none;
+    margin-top: 44px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .points li {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 25px;
+    line-height: 1.4;
+    color: rgba(240, 240, 245, 0.6);
+  }
+  .points li .tick {
+    flex: 0 0 auto;
+    margin-top: 9px;
+    width: 10px; height: 10px;
+    border-radius: 50%;
+    background: var(--accent-light);
+  }
+
+  /* Right-hand panel shared by the code, verdict, guard and ledger slides */
+  .panel {
+    position: absolute;
+    top: 50%;
+    left: 900px;
+    right: 130px;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  .note {
+    font-size: 24px;
+    line-height: 1.5;
+    color: rgba(240, 240, 245, 0.45);
+    text-align: center;
+    margin-top: 8px;
+  }
+
+  /* ---- code block ------------------------------------------------------- */
+  .code {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+    background: #12121f;
+  }
+  .code .cap {
+    padding: 22px 38px;
+    background: rgba(232, 145, 45, 0.14);
+    font-size: 21px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(240, 240, 245, 0.6);
+  }
+  .code pre {
+    padding: 38px 38px 42px;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 26px;
+    line-height: 1.75;
+    color: rgba(240, 240, 245, 0.9);
+    white-space: pre;
+  }
+  .code .tag { color: var(--accent-light); }
+  .code .attr { color: var(--pale); }
+  .code .val { color: rgba(240, 240, 245, 0.62); }
+  .code .cmt { color: rgba(240, 240, 245, 0.34); }
+
+  .annot { display: flex; flex-direction: column; gap: 14px; }
+  .annot div {
+    display: flex; align-items: flex-start; gap: 14px;
+    font-size: 23px; line-height: 1.4;
+    color: rgba(240, 240, 245, 0.55);
+  }
+  .annot .k { flex: 0 0 auto; color: var(--accent-light); }
+
+  /* ---- verdict rows (FCrDNS) -------------------------------------------- */
+  .verdict {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+    padding: 32px 38px;
+    border-radius: 16px;
+    background: rgba(37, 37, 64, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .verdict .who { flex: 1 1 auto; }
+  .verdict .ua { display: block; font-size: 27px; color: var(--off-white); }
+  .verdict .host { display: block; font-size: 21px; color: rgba(240, 240, 245, 0.42); margin-top: 8px; }
+  .verdict .stamp {
+    flex: 0 0 auto;
+    padding: 12px 24px;
+    border-radius: 999px;
+    font-size: 22px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+  .verdict.pass { border-color: rgba(74, 222, 128, 0.3); }
+  .verdict.pass .stamp { background: rgba(74, 222, 128, 0.16); color: #7ee2a8; }
+  .verdict.fail { border-color: rgba(232, 145, 45, 0.45); background: rgba(232, 145, 45, 0.08); }
+  .verdict.fail .stamp { background: rgba(232, 145, 45, 0.22); color: var(--pale); }
+
+  /* ---- request pipeline (the guard) -------------------------------------- */
+  .step {
+    display: flex;
+    align-items: center;
+    gap: 26px;
+    padding: 28px 34px;
+    border-radius: 16px;
+    background: rgba(37, 37, 64, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .step .num {
+    flex: 0 0 auto;
+    width: 58px; height: 58px;
+    display: grid; place-items: center;
+    border-radius: 12px;
+    background: var(--accent);
+    font-family: 'Jersey 20', sans-serif;
+    font-size: 38px;
+    color: #14121C;
+  }
+  .step .label { display: block; font-size: 29px; font-weight: 600; color: var(--off-white); }
+  .step .sub { display: block; font-size: 21px; color: rgba(240, 240, 245, 0.55); margin-top: 6px; }
+  .step.dim { opacity: 0.42; }
+  .step.dim .num { background: rgba(255,255,255,0.14); color: rgba(240,240,245,0.7); }
+  .step.stop { border-color: rgba(232, 145, 45, 0.5); background: rgba(232, 145, 45, 0.1); }
+
+  .lock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    font-size: 23px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(240, 240, 245, 0.42);
+  }
+  .lock .bar { flex: 1 1 auto; height: 1px; background: rgba(255,255,255,0.1); }
+
+  /* ---- ledger table ------------------------------------------------------ */
+  .sheet {
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.5);
+  }
+  .sheet .head {
+    display: flex;
+    padding: 24px 34px;
+    background: rgba(232, 145, 45, 0.16);
+    font-size: 20px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(240, 240, 245, 0.6);
+  }
+  .sheet .row {
+    display: flex;
+    align-items: center;
+    padding: 26px 34px;
+    background: rgba(37, 37, 64, 0.55);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 24px;
+  }
+  .sheet .c1 { flex: 0 0 224px; color: var(--off-white); }
+  /* nowrap: a user agent that wraps makes one row taller than the rest, and an uneven
+     ledger reads as a rendering bug rather than as data. */
+  .sheet .c2 { flex: 1 1 auto; min-width: 0; color: rgba(240, 240, 245, 0.45); font-size: 20px; white-space: nowrap; }
+  .sheet .c3 { flex: 0 0 74px; text-align: right; color: rgba(240, 240, 245, 0.6); }
+  .sheet .c4 { flex: 0 0 162px; text-align: right; }
+  .pill {
+    display: inline-block;
+    padding: 8px 18px;
+    border-radius: 999px;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .pill.blocked { background: rgba(232, 145, 45, 0.2); color: var(--pale); }
+  .pill.notice { background: rgba(255, 255, 255, 0.09); color: rgba(240, 240, 245, 0.62); }
+
+  /* ---- terminal --------------------------------------------------------- */
+  .term {
+    position: absolute;
+    top: 50%;
+    left: 900px;
+    right: -110px;
+    transform: translateY(-50%);
+    border-radius: 14px; overflow: hidden; box-shadow: 0 30px 90px rgba(0, 0, 0, 0.55); border: 1px solid rgba(255, 255, 255, 0.08); }
+  .term .chrome {
+    height: 44px;
+    background: #2a2a3e;
+    background-image:
+      radial-gradient(circle at 26px 22px, #ff5f57 6.5px, transparent 7px),
+      radial-gradient(circle at 52px 22px, #ffbd2e 6.5px, transparent 7px),
+      radial-gradient(circle at 78px 22px, #28ca42 6.5px, transparent 7px);
+  }
+  .term .body {
+    background: #12121f;
+    padding: 42px 44px;
+    font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    font-size: 24px;
+    line-height: 1.95;
+  }
+  .term .prompt { color: var(--accent-light); }
+  .term .cmd { color: var(--off-white); }
+  .term .out { color: rgba(240, 240, 245, 0.45); }
+  .term .ok { color: #4ade80; }
+  .term .warn { color: var(--pale); }
+  .term .blank { display: block; height: 18px; }
+
+  /* ---- footer lockup --------------------------------------------------- */
+  .footer {
+    position: absolute;
+    left: 130px;
+    bottom: 62px;
+    z-index: 3;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    font-size: 22px;
+    letter-spacing: 0.06em;
+    color: rgba(240, 240, 245, 0.4);
+  }
+  .footer img { width: 40px; height: 40px; border-radius: 9px; }
+  .footer b { color: rgba(240, 240, 245, 0.72); font-weight: 600; }
+
+  /* Only render the requested slide when screenshotting */
+  body.single .slide { display: none; }
+  body.single .slide.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- 1 · Cover ============================================================ -->
+<section class="slide cover" data-n="1">
+  <div class="inner">
+    <div class="copy">
+      <div class="eyebrow"><span class="rule"></span> Craft CMS 5</div>
+      <h1 class="gradient-text">Black Hole</h1>
+      <p class="tagline">A honeypot for bad bots.</p>
+      <p class="lede">A trap nothing well-behaved will ever walk into, and a permanent block for everything that does.</p>
+      <div class="badges">
+        <span class="badge free"><span class="dot"></span> Free &nbsp;·&nbsp; no editions</span>
+        <span class="badge">Craft 5.3+ · PHP 8.2+</span>
+      </div>
+    </div>
+    <div class="mark"><img src="assets/icon.svg" alt=""></div>
+  </div>
+</section>
+
+<!-- 2 · The mechanism ==================================================== -->
+<section class="slide statement" data-n="2">
+  <div class="inner">
+    <div class="eyebrow"><span class="rule"></span> The whole idea</div>
+    <div class="beats">
+      <div class="beat">
+        <div class="n">01</div>
+        <h3>robots.txt says<br>stay out</h3>
+        <p>One <span class="mono">Disallow</span> line, on one path. Every crawler that reads the file obeys it.</p>
+      </div>
+      <span class="arrow-h"></span>
+      <div class="beat">
+        <div class="n">02</div>
+        <h3>An invisible link<br>points at it</h3>
+        <p>Hidden, <span class="mono">nofollow</span>, out of the tab order. No reader sees it and no screen reader announces it.</p>
+      </div>
+      <span class="arrow-h"></span>
+      <div class="beat last">
+        <div class="n">03</div>
+        <h3>Whatever follows<br>it is blocked</h3>
+        <p>Getting there took ignoring an explicit instruction. That is the whole test, and it has no false positives to argue about.</p>
+      </div>
+    </div>
+    <p class="kicker gradient-text">Behaviour, not claims.</p>
+  </div>
+  <div class="footer"><img src="assets/icon.svg" alt=""> <b>Black Hole</b> &nbsp;·&nbsp; justinholt.com/plugins/craft-blackhole</div>
+</section>
+
+<!-- 3 · The link ========================================================= -->
+<section class="slide feature" data-n="3">
+  <div class="inner">
+    <div class="copy">
+      <div class="eyebrow"><span class="rule"></span> The trap</div>
+      <h2>Invisible to<br>everyone real</h2>
+      <p class="lede">Spliced into every front-end page before the last <span class="mono">&lt;/body&gt;</span> — or placed by hand, wherever you want it.</p>
+      <ul class="points">
+        <li><span class="tick"></span> A honeypot that catches people is a bug</li>
+        <li><span class="tick"></span> Told not to follow it three separate ways</li>
+        <li><span class="tick"></span> <span class="mono">{{ craft.blackhole.link }}</span> to place it yourself</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="code">
+      <div class="cap">On every page</div>
+      <pre><span class="tag">&lt;a</span> <span class="attr">href</span>=<span class="val">"/blackhole"</span>
+   <span class="attr">title</span>=<span class="val">"Do NOT follow this link or you</span>
+<span class="val">          will be banned from this site!"</span>
+   <span class="attr">rel</span>=<span class="val">"nofollow"</span> <span class="attr">style</span>=<span class="val">"display:none;"</span>
+   <span class="attr">aria-hidden</span>=<span class="val">"true"</span> <span class="attr">tabindex</span>=<span class="val">"-1"</span><span class="tag">&gt;</span>&amp;nbsp;<span class="tag">&lt;/a&gt;</span></pre>
+    </div>
+    <div class="annot">
+      <div><span class="k">display:none</span> hides it from anyone reading the page</div>
+      <div><span class="k">aria-hidden</span> keeps it out of the accessibility tree</div>
+      <div><span class="k">tabindex="-1"</span> keeps it out of the tab order</div>
+      <div><span class="k">title</span> is the sentence that makes the ban defensible</div>
+    </div>
+  </div>
+  <div class="footer"><img src="assets/icon.svg" alt=""> <b>Black Hole</b> &nbsp;·&nbsp; justinholt.com/plugins/craft-blackhole</div>
+</section>
+
+<!-- 4 · FCrDNS =========================================================== -->
+<section class="slide feature" data-n="4">
+  <div class="inner">
+    <div class="copy">
+      <div class="eyebrow"><span class="rule"></span> The allowlist</div>
+      <h2>&ldquo;Googlebot&rdquo;<br>is free to type</h2>
+      <p class="lede">So anything claiming to be one is made to prove it, the way Google documents.</p>
+      <ul class="points">
+        <li><span class="tick"></span> Address &rarr; hostname &rarr; back to the same address</li>
+        <li><span class="tick"></span> Anyone can point a PTR record at <span class="mono">googlebot.com</span></li>
+        <li><span class="tick"></span> Nobody can make Google&rsquo;s own DNS agree</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="verdict pass">
+      <span class="who">
+        <span class="ua mono">Googlebot/2.1</span>
+        <span class="host mono">crawl-66-249-66-1.googlebot.com &rarr; 66.249.66.1</span>
+      </span>
+      <span class="stamp">VERIFIED</span>
+    </div>
+    <div class="verdict fail">
+      <span class="who">
+        <span class="ua mono">Googlebot/2.1</span>
+        <span class="host mono">no PTR record &nbsp;·&nbsp; 203.0.113.7</span>
+      </span>
+      <span class="stamp">NOT GOOGLE</span>
+    </div>
+    <div class="verdict fail">
+      <span class="who">
+        <span class="ua mono">Googlebot/2.1</span>
+        <span class="host mono">spoofed.googlebot.com &rarr; does not resolve back</span>
+      </span>
+      <span class="stamp">NOT GOOGLE</span>
+    </div>
+    <p class="note">Two DNS lookups, cached for a day, and only ever on something that already reached the trap.</p>
+  </div>
+  <div class="footer"><img src="assets/icon.svg" alt=""> <b>Black Hole</b> &nbsp;·&nbsp; justinholt.com/plugins/craft-blackhole</div>
+</section>
+
+<!-- 5 · The guard ======================================================== -->
+<section class="slide feature" data-n="5">
+  <div class="inner">
+    <div class="copy">
+      <div class="eyebrow"><span class="rule"></span> The guard</div>
+      <h2>Turned away<br>before routing</h2>
+      <p class="lede">One indexed lookup at <span class="mono">EVENT_BEFORE_REQUEST</span>, and a banned address gets no further.</p>
+      <ul class="points">
+        <li><span class="tick"></span> No templates rendered, no queries, no session</li>
+        <li><span class="tick"></span> The session is never touched until a ban is certain</li>
+        <li><span class="tick"></span> The check fails open — it cannot take a site down</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="step stop"><span class="num">1</span><span><b class="label">Is this address banned?</b><span class="sub">One indexed lookup. The only cost an ordinary request pays</span></span></div>
+    <div class="lock"><span class="bar"></span> Everything below is skipped <span class="bar"></span></div>
+    <div class="step dim"><span class="num">2</span><span><b class="label">Route the request</b><span class="sub">Element lookups, matched URI rules</span></span></div>
+    <div class="step dim"><span class="num">3</span><span><b class="label">Start a session</b><span class="sub">And a Set-Cookie on every response with it</span></span></div>
+    <div class="step dim"><span class="num">4</span><span><b class="label">Render the page</b><span class="sub">Templates, queries, the lot</span></span></div>
+    <p class="note">Asking &ldquo;is this visitor logged in?&rdquo; <em>starts</em> a session — and a Set-Cookie on every response is a full-page cache that never hits again. So it is asked last, not first.</p>
+  </div>
+  <div class="footer"><img src="assets/icon.svg" alt=""> <b>Black Hole</b> &nbsp;·&nbsp; justinholt.com/plugins/craft-blackhole</div>
+</section>
+
+<!-- 6 · The ledger ======================================================= -->
+<section class="slide feature" data-n="6">
+  <div class="inner">
+    <div class="copy">
+      <div class="eyebrow"><span class="rule"></span> The ledger</div>
+      <h2>Every address<br>it ever took</h2>
+      <p class="lede">One row per address, filterable, searchable and sortable — opening onto that address&rsquo;s whole request history.</p>
+      <ul class="points">
+        <li><span class="tick"></span> Release, whitelist, delete, or block by hand</li>
+        <li><span class="tick"></span> Hostname, user agent, referrer, what it asked for</li>
+        <li><span class="tick"></span> Every command the CP has, the console has too</li>
+      </ul>
+    </div>
+  </div>
+  <div class="panel">
+    <div class="sheet">
+      <div class="head"><span class="c1">Address</span><span class="c2">User agent</span><span class="c3">Hits</span><span class="c4">Status</span></div>
+      <div class="row"><span class="c1 mono">203.0.113.42</span><span class="c2 mono">EvilScraper/1.0</span><span class="c3 mono">1</span><span class="c4"><span class="pill blocked">Blocked</span></span></div>
+      <div class="row"><span class="c1 mono">198.51.100.9</span><span class="c2 mono">python-requests/2.31</span><span class="c3 mono">3</span><span class="c4"><span class="pill blocked">Blocked</span></span></div>
+      <div class="row"><span class="c1 mono">2001:db8::8a2e</span><span class="c2 mono">Mozilla/5.0 (compatible)</span><span class="c3 mono">1</span><span class="c4"><span class="pill blocked">Blocked</span></span></div>
+      <div class="row"><span class="c1 mono">203.0.113.7</span><span class="c2 mono">Googlebot/2.1 (unverified)</span><span class="c3 mono">1</span><span class="c4"><span class="pill blocked">Blocked</span></span></div>
+      <div class="row"><span class="c1 mono">192.0.2.24</span><span class="c2 mono">HeadlessChrome/126</span><span class="c3 mono">1</span><span class="c4"><span class="pill notice">On notice</span></span></div>
+    </div>
+    <p class="note">A blocked bot speeds up rather than going away, so repeat attempts cost one arithmetic UPDATE — not a row each.</p>
+  </div>
+  <div class="footer"><img src="assets/icon.svg" alt=""> <b>Black Hole</b> &nbsp;·&nbsp; justinholt.com/plugins/craft-blackhole</div>
+</section>
+
+<!-- 7 · Console + free =================================================== -->
+<section class="slide feature" data-n="7">
+  <div class="inner">
+    <div class="copy">
+      <div class="eyebrow"><span class="rule"></span> Setup &amp; console</div>
+      <h2>Two commands,<br>then nothing</h2>
+      <p class="lede">Install it, let it write the robots.txt directives, and the hidden link is already on every page.</p>
+      <ul class="points">
+        <li><span class="tick"></span> Thresholds, custom paths, per-bot hit logs, redirects</li>
+        <li><span class="tick"></span> Disable for logged-in users, email alerts, retention</li>
+        <li><span class="tick"></span> All of it free. No editions, no licensing code</li>
+      </ul>
+    </div>
+  </div>
+  <div class="term">
+    <div class="chrome"></div>
+    <div class="body">
+      <div><span class="prompt">$</span> <span class="cmd">composer require justinholtweb/craft-blackhole</span></div>
+      <div><span class="prompt">$</span> <span class="cmd">php craft plugin/install blackhole</span></div>
+      <span class="blank"></span>
+      <div><span class="prompt">$</span> <span class="cmd">php craft blackhole/robots/write</span></div>
+      <div class="out">Added to web/robots.txt: <span class="ok">Disallow: /blackhole</span></div>
+      <span class="blank"></span>
+      <div><span class="prompt">$</span> <span class="cmd">php craft blackhole/bots/list --status=blocked</span></div>
+      <div class="out">203.0.113.42 &nbsp;&nbsp; EvilScraper/1.0 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span class="warn">blocked</span></div>
+      <div class="out">198.51.100.9 &nbsp;&nbsp; python-requests/2.31 &nbsp; <span class="warn">blocked</span></div>
+      <div class="out">2 addresses. <span class="ok">Nothing else to do.</span></div>
+    </div>
+  </div>
+  <div class="footer"><img src="assets/icon.svg" alt=""> <b>Black Hole</b> &nbsp;·&nbsp; justinholt.com/plugins/craft-blackhole</div>
+</section>
+
+<script>
+  var n = new URLSearchParams(location.search).get('s');
+  if (n) {
+    document.body.classList.add('single');
+    var el = document.querySelector('.slide[data-n="' + n + '"]');
+    if (el) el.classList.add('active');
+  }
+</script>
+</body>
+</html>
