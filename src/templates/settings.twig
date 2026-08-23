@@ -1,3 +1,7 @@
+{# Field names carry no `settings[…]` prefix: `craft\base\Plugin::settingsResponse()` runs this
+   template's output through `View::namespaceInputs(…, 'settings')`, so a name written as
+   `settings[foo]` here posts as `settings[settings][foo]` and saves nothing at all — the screen
+   looks perfect, Craft reports "Plugin settings saved", and every edit is silently discarded. #}
 {% import "_includes/forms" as forms %}
 
 {% set uaRows = [] %}
@@ -53,7 +57,7 @@
     label: "Enabled"|t('blackhole'),
     instructions: "The master switch. Off means nothing is trapped and nothing is blocked; everything already in the ledger stays there."|t('blackhole'),
     id: 'enabled',
-    name: 'settings[enabled]',
+    name: 'enabled',
     on: settings.enabled
 }) }}
 
@@ -61,7 +65,7 @@
     label: "Trap path"|t('blackhole'),
     instructions: "Where the honeypot lives, relative to the site root. Change it and the robots.txt directives change with it."|t('blackhole'),
     id: 'trapPath',
-    name: 'settings[trapPath]',
+    name: 'trapPath',
     value: settings.trapPath,
     errors: settings.getErrors('trapPath')
 }) }}
@@ -70,7 +74,7 @@
     label: "Add the link automatically"|t('blackhole'),
     instructions: "Splice the hidden link into every front-end page, just before `</body>`. Turn it off to place `{{ craft.blackhole.link }}` yourself."|t('blackhole'),
     id: 'autoInject',
-    name: 'settings[autoInject]',
+    name: 'autoInject',
     on: settings.autoInject
 }) }}
 
@@ -78,7 +82,7 @@
     label: "Link warning"|t('blackhole'),
     instructions: "The link’s title attribute. Nobody who reads the page can say they weren’t told, which is what makes the ban defensible."|t('blackhole'),
     id: 'linkTitle',
-    name: 'settings[linkTitle]',
+    name: 'linkTitle',
     value: settings.linkTitle
 }) }}
 
@@ -90,7 +94,7 @@
     label: "Trips before a ban"|t('blackhole'),
     instructions: "How many times an address has to reach the trap before it’s banned. One is the honeypot’s whole premise — there’s no innocent reason to be here."|t('blackhole'),
     id: 'blockThreshold',
-    name: 'settings[blockThreshold]',
+    name: 'blockThreshold',
     value: settings.blockThreshold,
     type: 'number',
     size: 5,
@@ -102,7 +106,7 @@
     label: "Ban length"|t('blackhole'),
     instructions: "Days a ban lasts. 0 means forever."|t('blackhole'),
     id: 'banDays',
-    name: 'settings[banDays]',
+    name: 'banDays',
     value: settings.banDays,
     type: 'number',
     size: 5,
@@ -114,7 +118,7 @@
     label: "Never catch logged-in users"|t('blackhole'),
     instructions: "Worth leaving on. A link-prefetching browser extension on one staff machine can otherwise lock out the whole office."|t('blackhole'),
     id: 'ignoreLoggedIn',
-    name: 'settings[ignoreLoggedIn]',
+    name: 'ignoreLoggedIn',
     on: settings.ignoreLoggedIn
 }) }}
 
@@ -122,7 +126,7 @@
     label: "Resolve hostnames"|t('blackhole'),
     instructions: "Look up the reverse DNS name of a caught address, for the record and the alert. One blocking DNS call, and only ever on a catch."|t('blackhole'),
     id: 'resolveHostnames',
-    name: 'settings[resolveHostnames]',
+    name: 'resolveHostnames',
     on: settings.resolveHostnames
 }) }}
 
@@ -134,7 +138,7 @@
     label: "Whitelisted addresses"|t('blackhole'),
     instructions: "Exact addresses (`203.0.113.7`), dotted prefixes (`203.0.113.`) or CIDR ranges (`203.0.113.0/24`, `2001:db8::/32`). These are never caught and never blocked."|t('blackhole'),
     id: 'whitelistIps',
-    name: 'settings[whitelistIps]',
+    name: 'whitelistIps',
     cols: {
         value: { heading: "Address or range"|t('blackhole'), type: 'singleline', width: '100%' }
     },
@@ -150,7 +154,7 @@
     label: "Whitelisted user agents"|t('blackhole'),
     instructions: "Matched case-insensitively as substrings. Remember that a user agent is a claim, not a fact — which is what the setting below is for."|t('blackhole'),
     id: 'whitelistUserAgents',
-    name: 'settings[whitelistUserAgents]',
+    name: 'whitelistUserAgents',
     cols: {
         value: { heading: "User agent contains"|t('blackhole'), type: 'singleline', width: '100%' }
     },
@@ -166,7 +170,7 @@
     label: "Verify good bots"|t('blackhole'),
     instructions: "Make a visitor claiming to be Googlebot, Bingbot, Slurp, YandexBot, Baiduspider or Applebot prove it by forward-confirmed reverse DNS. Without this, the user-agent list is a door with a sign on it instead of a lock."|t('blackhole'),
     id: 'verifyGoodBots',
-    name: 'settings[verifyGoodBots]',
+    name: 'verifyGoodBots',
     on: settings.verifyGoodBots
 }) }}
 
@@ -178,7 +182,7 @@
     label: "Blocked status code"|t('blackhole'),
     instructions: "403 is the honest answer. 404 hides that anything happened, which some people prefer."|t('blackhole'),
     id: 'blockedStatusCode',
-    name: 'settings[blockedStatusCode]',
+    name: 'blockedStatusCode',
     options: statusCodes,
     value: settings.blockedStatusCode,
     errors: settings.getErrors('blockedStatusCode')
@@ -188,7 +192,7 @@
     label: "Blocked message"|t('blackhole'),
     instructions: "Shown to an address that has already been banned. It’s being read by software, so keep it plain."|t('blackhole'),
     id: 'blockedMessage',
-    name: 'settings[blockedMessage]',
+    name: 'blockedMessage',
     value: settings.blockedMessage,
     rows: 3
 }) }}
@@ -197,7 +201,7 @@
     label: "Caught message"|t('blackhole'),
     instructions: "Shown at the moment an address trips the trap."|t('blackhole'),
     id: 'trappedMessage',
-    name: 'settings[trappedMessage]',
+    name: 'trappedMessage',
     value: settings.trappedMessage,
     rows: 3
 }) }}
@@ -206,7 +210,7 @@
     label: "Blocked template"|t('blackhole'),
     instructions: "Optional site template rendered instead of the built-in block page. It gets `ip`, `message`, `userAgent`, `requestUri` and `statusCode`."|t('blackhole'),
     id: 'blockedTemplate',
-    name: 'settings[blockedTemplate]',
+    name: 'blockedTemplate',
     value: settings.blockedTemplate,
     placeholder: '_blackhole/blocked'
 }) }}
@@ -215,7 +219,7 @@
     label: "Caught template"|t('blackhole'),
     instructions: "Optional site template rendered instead of the built-in trap page. It gets `caught`, `bot`, `ip`, `message`, `blocked`, `hits`, `threshold` and `reason`."|t('blackhole'),
     id: 'trappedTemplate',
-    name: 'settings[trappedTemplate]',
+    name: 'trappedTemplate',
     value: settings.trappedTemplate,
     placeholder: '_blackhole/trapped'
 }) }}
@@ -224,7 +228,7 @@
     label: "Redirect blocked requests to"|t('blackhole'),
     instructions: "Optional. Must be on another host — an on-site redirect would loop, because that request is blocked too, so one is ignored and the block page is shown instead."|t('blackhole'),
     id: 'redirectUrl',
-    name: 'settings[redirectUrl]',
+    name: 'redirectUrl',
     value: settings.redirectUrl,
     placeholder: 'https://example.com/'
 }) }}
@@ -237,7 +241,7 @@
     label: "Email alerts"|t('blackhole'),
     instructions: "One email the first time an address is banned, and never again for that address."|t('blackhole'),
     id: 'emailAlerts',
-    name: 'settings[emailAlerts]',
+    name: 'emailAlerts',
     on: settings.emailAlerts,
     toggle: 'alert-settings'
 }) }}
@@ -247,7 +251,7 @@
         label: "Alert recipients"|t('blackhole'),
         instructions: "Leave empty to email every active admin."|t('blackhole'),
         id: 'alertRecipients',
-        name: 'settings[alertRecipients]',
+        name: 'alertRecipients',
         cols: {
             value: { heading: "Email address"|t('blackhole'), type: 'singleline', width: '100%' }
         },
@@ -264,7 +268,7 @@
     label: "Serve robots.txt"|t('blackhole'),
     instructions: "Let the plugin answer `/robots.txt` with the directives above. Only takes effect when the site has no `web/robots.txt` of its own."|t('blackhole'),
     id: 'serveRobotsTxt',
-    name: 'settings[serveRobotsTxt]',
+    name: 'serveRobotsTxt',
     on: settings.serveRobotsTxt
 }) }}
 
@@ -272,7 +276,7 @@
     label: "Keep hit history for"|t('blackhole'),
     instructions: "Days of per-request history to keep. 0 keeps everything. Craft’s garbage collector does the pruning."|t('blackhole'),
     id: 'logRetentionDays',
-    name: 'settings[logRetentionDays]',
+    name: 'logRetentionDays',
     value: settings.logRetentionDays,
     type: 'number',
     size: 5,
