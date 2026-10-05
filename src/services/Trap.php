@@ -6,6 +6,7 @@ use Craft;
 use craft\helpers\Html;
 use craft\helpers\Template;
 use craft\helpers\UrlHelper;
+use justinholtweb\blackhole\helpers\Ip;
 use justinholtweb\blackhole\models\Settings;
 use justinholtweb\blackhole\models\Visitor;
 use justinholtweb\blackhole\Plugin;
@@ -131,6 +132,37 @@ class Trap extends Component
     }
 
     /**
+     * Why a request that a browser describes this way must not count, or null if it may.
+     *
+     * A browser says where a request came from in `Sec-Fetch-*`. A hit counts only as a page load
+     * the browser made from this site — `document`, `same-origin`/`same-site`/`none` — or when
+     * the headers are absent, as they are from the crawlers this trap exists for. Before 5.0.1 it
+     * counted anything, so an `<img src>` pointing at the trap on a busy page elsewhere put every
+     * one of that page's visitors on this site's blocklist; a cross-site page could equally send
+     * them here by navigation. A bot that renders pages and follows the hidden link on *this*
+     * site still arrives as a same-origin document, and is still caught.
+     */
+    public static function fetchExemption(?string $site, ?string $dest): ?string
+    {
+        $site = $site !== null ? strtolower(trim($site)) : null;
+        $dest = $dest !== null ? strtolower(trim($dest)) : null;
+
+        if ($site === null && $dest === null) {
+            return null;
+        }
+
+        if ($site === 'cross-site') {
+            return Craft::t('blackhole', 'the request came from another site');
+        }
+
+        if ($dest !== null && $dest !== 'document') {
+            return Craft::t('blackhole', 'the request was for an embedded resource, not a page');
+        }
+
+        return null;
+    }
+
+    /**
      * Springs the trap on a visitor, unless they are exempt.
      *
      * Returns the row they landed in, or null if they were let through — in which case why they
@@ -143,6 +175,25 @@ class Trap extends Component
         if (!$visitor->hasIp()) {
             $this->lastExemption = Craft::t('blackhole', 'no usable IP address');
             return null;
+        }
+
+        $request = Craft::$app->getRequest();
+
+        if ($request instanceof \craft\web\Request) {
+            $fetchExemption = self::fetchExemption(
+                $request->getHeaders()->get('Sec-Fetch-Site'),
+                $request->getHeaders()->get('Sec-Fetch-Dest'),
+            );
+
+            if ($fetchExemption !== null) {
+                $this->lastExemption = $fetchExemption;
+                return null;
+            }
+
+            if (Ip::isOnlyClaimed($request)) {
+                $this->lastExemption = Craft::t('blackhole', 'the address only comes from a forwarding header nobody has said to trust — set trustedHosts to your proxy');
+                return null;
+            }
         }
 
         $reason = $plugin->whitelist->reason($visitor);

@@ -2,6 +2,32 @@
 
 All notable changes to Black Hole are documented here.
 
+## 5.0.1 — 2026-10-05
+
+> {warning} Behind a proxy or CDN, Black Hole now needs Craft's `trustedHosts` set to your proxy's addresses (as well as `ipHeaders`) before it will ban the address a forwarding header gives. Until then those visits are let through, with the reason on the trap page — banning on an address anyone can type into `X-Forwarded-For` let anyone ban anyone.
+
+### Security
+
+- **Anybody could get innocent visitors banned.** Every request that reached the trap counted, so an
+  `<img src>` pointing at it on a busy page elsewhere put every one of that page's visitors on this
+  site's blocklist — their browsers fetched it without cookies, so "never catch logged-in users"
+  couldn't help. A visit now counts only as a page load the browser made from this site, or when
+  the `Sec-Fetch-*` headers are absent, as they are from crawlers; cross-site requests and embedded
+  resources are let through.
+- **Anybody could name the address to ban.** Under Craft's default `trustedHosts` (`any`), the
+  address came from `X-Forwarded-For` if the request carried one, so a single request to the trap
+  could ban any address its sender chose. A forwarded address is now only banned once `trustedHosts`
+  names the proxy it came through.
+
+### Fixed
+
+- `blackhole/bots/block` printed a PHP warning instead of the address when given something that
+  isn't one: `"“$ip”"` interpolates a variable called `ip”`.
+
+### Changed
+
+- PHPStan and ECS configuration.
+
 ## 5.0.0 — 2026-08-23
 
 Initial release. Versioned 5.x to match the Craft major it targets, as the rest of this plugin

@@ -156,4 +156,30 @@ class Ip
 
         return $printable === false ? trim($ip) : $printable;
     }
+
+    /**
+     * Whether the address Craft resolved for this request is only *claimed* — taken from a
+     * forwarding header the site has not said to trust — rather than the address actually
+     * connecting.
+     *
+     * Craft's default `trustedHosts` is "any", under which `getUserIP()` believes whatever
+     * `X-Forwarded-For` (or `ipHeaders`) says. That is fine for deciding *who to let in*, and
+     * fatal for deciding *who to ban*: anybody could name a victim's address and have it blocked.
+     * So a claimed address never springs the trap. Behind a real proxy, set `trustedHosts` to it
+     * and the forwarded address becomes a fact.
+     */
+    public static function isOnlyClaimed(\craft\web\Request $request): bool
+    {
+        $trusted = array_values(array_filter((array)$request->trustedHosts));
+        $trustsProxies = $trusted !== [] && !in_array('any', $trusted, true);
+
+        if ($trustsProxies) {
+            return false;
+        }
+
+        $remote = self::normalize((string)$request->getRemoteIP());
+        $resolved = self::normalize((string)$request->getUserIP());
+
+        return $resolved !== '' && $remote !== '' && $resolved !== $remote;
+    }
 }

@@ -31,6 +31,24 @@ curl -A 'TestScraper/1.0' https://example.com/blackhole
 If that does not produce a row in **Black Hole → Caught bots**, the plugin is not seeing the request
 at all — check that nothing in front of PHP is answering `/blackhole` first.
 
+## Nothing is being caught, and the trap page says why
+
+The trap page answers every visit, and when it lets one through it says so — **Why:** and a reason.
+Since 5.0.1 three of those reasons are deliberate:
+
+- **the address only comes from a forwarding header nobody has said to trust** — your site is behind
+  a proxy or CDN and `trustedHosts` is still Craft's default, `any`. Set it to your proxy's
+  addresses (see **Behind a proxy or a CDN** on the installation page); until then an address in
+  `X-Forwarded-For` is a claim anyone could make, and banning on it would let anyone ban anyone.
+- **the request came from another site** — the browser said the request started on another site.
+  That is what an `<img>` or a redirect planted elsewhere looks like, and counting it would ban that
+  page's visitors.
+- **the request was for an embedded resource, not a page** — an image, script or frame pointing at
+  the trap, even from your own site (a posted comment, say).
+
+Crawlers send none of the `Sec-Fetch-*` headers that carry those last two, and a bot rendering your
+pages follows the hidden link as a same-site page load, so both are still caught.
+
 ## Everything is being caught, including me
 
 Almost always one of two things:
@@ -38,8 +56,9 @@ Almost always one of two things:
 **A proxy or CDN is hiding the real address.** Every visitor arrives looking like your load
 balancer, so the first catch bans everyone. Set `ipHeaders` in `config/general.php` to whichever
 header actually carries the client address (`CF-Connecting-IP` behind Cloudflare,
-`X-Forwarded-For` behind most others) and Craft — and therefore Black Hole — will resolve it
-correctly. Then `php craft blackhole/bots/purge` to clear the damage.
+`X-Forwarded-For` behind most others), and `trustedHosts` to your proxy's addresses, and Craft —
+and therefore Black Hole — will resolve it correctly. Then `php craft blackhole/bots/purge` to clear
+the damage.
 
 **A browser extension is prefetching links.** Link-prefetchers follow `display:none` anchors
 happily. `rel="nofollow"` is supposed to stop them and does not always. This is exactly what

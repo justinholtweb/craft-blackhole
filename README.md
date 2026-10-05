@@ -223,9 +223,14 @@ this with caching"; the more useful version is that the trap and the ledger work
 blocking of *cached* pages is affected.
 
 **Get the real address.** Behind a proxy or a CDN, Craft needs to be told which header carries the
-client address, or every visitor looks like your load balancer. That's `ipHeaders` in
-`config/general.php` — Black Hole uses whatever Craft resolves, so configure it there once and
-everything agrees.
+client address (`ipHeaders`) and which proxies may set it (`trustedHosts`), both in
+`config/general.php`. While `trustedHosts` is Craft's default `any`, Black Hole will not ban an
+address that only a forwarding header claims — anybody can send one.
+
+**Only real visits count.** A browser says where a request came from (`Sec-Fetch-*`). A hit from
+another site — an `<img>` planted on a busy page elsewhere — or for an embedded resource is not a
+visit and catches nobody, so nobody can get your visitors banned by pointing their browsers at the
+trap. Crawlers send no such headers and are caught as before.
 
 **Blocking is always by address.** A user agent is a claim; a request is a fact. Nothing here bans
 a user agent, and the only place claims are considered at all is the whitelist — which is exactly

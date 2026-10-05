@@ -89,7 +89,7 @@ class BotsController extends Controller
     public function actionBlock(string $ip): int
     {
         if (!Ip::isValid($ip)) {
-            $this->stderr("“$ip” is not an IP address.\n", Console::FG_RED);
+            $this->stderr("“{$ip}” is not an IP address.\n", Console::FG_RED);
 
             return ExitCode::USAGE;
         }

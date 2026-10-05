@@ -32,6 +32,13 @@ disable-for-logged-in) included at no cost.
 is a string the client picked and a request is a fact. The one place claims are considered is the
 whitelist, which is exactly why the whitelist verifies them by forward-confirmed reverse DNS.
 
+**And the fact has to be the visitor's own (5.0.1).** `Trap::spring()` lets through, with a reason:
+a request a browser marks cross-site or as a subresource (`Trap::fetchExemption()` on
+`Sec-Fetch-Site`/`Sec-Fetch-Dest` — absent headers, as from crawlers, still count), and an address
+that only a forwarding header claims while `trustedHosts` is unconfigured (`Ip::isOnlyClaimed()`).
+Otherwise an `<img>` elsewhere, or one `X-Forwarded-For`, could ban anyone. The guard's *lookup*
+still uses `getUserIP()` — that only decides who to let in.
+
 ### Services
 
 - `guard` — the door. `Application::EVENT_BEFORE_REQUEST`, one ban lookup, deny and `end()`.
@@ -104,6 +111,8 @@ No local PHP on this Mac. Everything runs inside the plugin-testing container:
 
 ```sh
 docker exec -w /var/www/html ddev-plugin-testing-web php /var/www/craft-blackhole/tests/integration/checks.php   # 77 checks
+docker exec -w /var/www/html ddev-plugin-testing-web php /var/www/craft-blackhole/tests/integration/security.php # 8, IN-PROCESS: Sec-Fetch and forwarded-address exemptions
+docker exec -w /sites/craft-blackhole ddev-phpstan-runner-web bash -c 'vendor/bin/phpstan analyse --memory-limit=1G && vendor/bin/ecs check'
 docker exec ddev-plugin-testing-web bash -c 'find /var/www/craft-blackhole/src -name "*.php" -print0 | xargs -0 -n1 php -l'
 ```
 
@@ -111,6 +120,13 @@ The checks are idempotent and self-cleaning. Every address they touch is in a do
 (RFC 5737 `203.0.113.0/24`, RFC 3849 `2001:db8::/32`) so it can never collide with a real caught
 bot, they sweep up strays from a run that died mid-way, and they put every setting they changed
 back at the end.
+
+**Never spring the trap over HTTP from inside the harness** — the visitor is the harness itself,
+the threshold is one and bans don't expire, so a wrong answer locks every other session out.
+`security.php` installs a web request in-process and uses only TEST-NET addresses for that reason.
+The curl below goes through the DDEV router, a proxy, so if it arrives with `X-Forwarded-For`, 5.0.1
+lets it through ("forwarding header") unless the harness sets `trustedHosts` — unverified, because
+checking means springing the trap on the router.
 
 Live end-to-end, against the harness:
 

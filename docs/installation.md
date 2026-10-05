@@ -90,9 +90,23 @@ php craft blackhole/bots/purge
 
 ## Behind a proxy or a CDN
 
-Craft needs to be told which header carries the real client address, or every visitor looks like
-your load balancer and one catch bans the world. That is `ipHeaders` in `config/general.php`. Black
-Hole uses whatever Craft resolves, so configure it there once and everything agrees.
+Craft needs to be told two things, both in `config/general.php`:
+
+- **`ipHeaders`** — which header carries the real client address (`CF-Connecting-IP` behind
+  Cloudflare, `X-Forwarded-For` behind most others). Without it every visitor looks like your load
+  balancer.
+- **`trustedHosts`** — the proxies allowed to set that header. Craft's default is `any`, which means
+  *anybody* can send the header and name whatever address they like.
+
+Black Hole only bans an address it can trust. Since 5.0.1, while `trustedHosts` is left at `any`, a
+request whose address comes from a forwarding header is **not** caught — otherwise anyone could
+send `X-Forwarded-For: <your customer's address>` to the trap and get that customer banned. So
+behind a proxy or CDN, set both, and the trap catches by the real address again.
+
+```php
+'ipHeaders' => ['CF-Connecting-IP'],
+'trustedHosts' => ['173.245.48.0/20', '103.21.244.0/22', /* … your proxy's ranges */],
+```
 
 ## Uninstalling
 
